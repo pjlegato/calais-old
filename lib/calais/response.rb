@@ -30,8 +30,8 @@ module Calais
       def parse_names
         @names = @libxml.root.find("rdf:Description/rdf:type[contains(@rdf:resource, '/em/e/')]/..").map do |n|
           name = n.find_first("c:name").content
-          type = n.find_first("rdf:type").properties.to_a.assoc("resource").last.split('/').last
-          hash = n.properties.to_a.assoc("about").last.split("/").last
+          type = n.find_first("rdf:type").properties.get_attribute("resource").value.split('/').last
+          hash = n.properties.get_attribute("about").value.split("/").last
           
           locations = @libxml.root.find("rdf:Description/c:subject[contains(@rdf:resource, '#{hash}')]/..").map do |n2|
             start = n2.find_first("c:offset").content.to_i
@@ -49,8 +49,8 @@ module Calais
       
       def parse_relationships
         @libxml.root.find("rdf:Description/rdf:type[contains(@rdf:resource, '/em/r')]/..").each do |n|
-          hash = n.properties.to_a.assoc("about").last.split("/").last
-          type = n.find_first("rdf:type").properties.to_a.assoc("resource").last.split('/').last
+          hash = n.properties.get_attribute("about").value.split("/").last
+          type = n.find_first("rdf:type").properties.get_attribute("resource").value.split('/').last
           
           metadata = {}
           
