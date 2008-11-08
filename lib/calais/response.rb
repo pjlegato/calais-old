@@ -33,10 +33,15 @@ module Calais
           type = n.find_first("rdf:type").properties["resource"].split('/').last
           hash = n.properties["about"].split("/").last
 
-          locations = @libxml.root.find("rdf:Description/c:subject[contains(@rdf:resource, '#{hash}')]/..").map do |n2|
+          locations = []
+          relevance = nil
+
+          @libxml.root.find("rdf:Description/c:subject[contains(@rdf:resource, '#{hash}')]/..").each do |n2|
             if start = n2.find_first("c:offset")
               start = start.content.to_i
-              Range.new(start, start+n2.find_first("c:length").content.to_i)
+              locations.push(Range.new(start, start+n2.find_first("c:length").content.to_i))
+            elsif relevance = n2.find_first("c:relevance")
+              relevance = relevance.content.to_f
             end
           end
 
@@ -44,7 +49,8 @@ module Calais
             :name => name,
             :hash => hash,
             :type => type,
-            :locations => locations
+            :locations => locations,
+            :relevance => relevance
           )
         end
       end

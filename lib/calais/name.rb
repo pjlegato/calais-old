@@ -1,7 +1,7 @@
 module Calais
   class Name
-    attr_accessor :name, :type, :hash, :locations
-    
+    attr_accessor :name, :type, :hash, :locations, :relevance
+
     TYPES = {
       "cities"                => "City",
       "companies"             => "Company",
@@ -15,11 +15,11 @@ module Calais
       "regions"               => "Region",
       "urls"                  => "URL"
     }
-    
+
     def initialize(args={})
       args.each {|k,v| send("#{k}=", v)}
     end
-    
+
     def self.find_in_names(hash, names)
       names.select {|name| name.hash == hash }.first
     end
